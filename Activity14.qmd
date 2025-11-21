@@ -1,0 +1,113 @@
+---
+title: "Activity 14 QMD File: November 10"
+author: "Bryan Dorneman"
+Date: "November 10 2025"
+format: pdf
+execute: 
+  echo: false
+---
+
+#Armed Forces Data Wrangling
+```{r}
+#| label: fig-armed-forces
+#| fig-cap: "Frequency Table for Pay Grade and Branches"
+#| fig-alt: "Table showing the number of people within each pay grade and branch."
+
+library(tidyverse)
+library(tidyr)
+library(dplyr)
+library(tibble)
+
+
+#Wrangle Data
+col_names <- c("pay_grade", "army_male","army_female", "army_total","navy_male","navy_female", "navy_total","marine_corps_male","marine_corps_female", "marine_corps_total", "air_force_male","air_force_female", "air_force_total","space_force_male","space_force_female", "space_force_total")
+Armed_forces <- read_csv("US_Armed_Forces_(6_2025) - Sheet1.csv")
+colnames(Armed_forces) <- col_names
+Armed_forces <- na.omit(Armed_forces)
+col_names_keep <- c("pay_grade", "army_male","army_female","navy_male","navy_female","marine_corps_male","marine_corps_female", "air_force_male","air_force_female", "space_force_male","space_force_female")
+Armed_forces <- Armed_forces %>%
+  select(col_names_keep)
+armed_tidy <- Armed_forces %>%
+  filter(!grepl("Total",pay_grade)) %>%
+  filter(!grepl("Pay Grade", pay_grade))
+armed_tidy <- armed_tidy %>% 
+  pivot_longer(
+    cols = -pay_grade,
+    names_to = c("branch", "gender"),
+    names_pattern = "([a-z]+)_(male|female)",
+    values_to = "count"
+  )
+view(armed_tidy)
+
+#Seperate out rows for frequency table
+armed_tidy <- tibble(
+  branch = c("Army", "Navy", "Marines", "Air Force", "Space Force"),
+  pay_grade = c("E1", "E2", "E3", "E4", "E5"),
+  n = c(100, 120, 80, 60, 40)
+)
+armed_tidy_indiv <- uncount(armed_tidy,n)
+view(armed_tidy_indiv)
+#Create Frequency Table
+table(armed_tidy_indiv)
+```
+
+#Baby Names Popularity
+I chose these names because they seemed unique and I wanted 2 girls names and 2 boys names. 
+
+```{r}
+
+#| label: fig-baby-names
+#| fig-cap: "Popularity of Chosen Baby Names Over Time"
+#| fig-alt: "Line chart showing the popularity of four baby names over time beginning in 1880."
+
+library(dcData)
+data("BabyNames")
+view(BabyNames)
+
+#Filter BabyNames Data for names to keep
+names_to_keep <- c("Winnie","Ida", "Len", "Pat")
+filter_babyNames <- BabyNames %>%
+  filter(name %in% names_to_keep) %>%
+  group_by(name,year) %>%
+  summarise(total=sum(count),.groups = "drop")
+
+#Create Plot to show baby name trends for chosen baby names
+ggplot(filter_babyNames,aes(x=year,y=total,color=name)) +
+  geom_line(linewidth=1) +
+  labs(title = "Popularity of Baby Names Over Time",
+       x="Year", y="Total Number of Babies", color = "Name",
+       alt = "Line chart showing popularity of baby names over time",
+       caption = "A line chart showing the popularity of four baby names over time beginning in 1880") +
+  theme_minimal()
+```
+
+#Box problem mathematical function
+```{r}
+#| label: fig-volume-equation
+#| fig-cap: "Box Volume vs Cutout Size"
+#| fig-alt: "Line chart showing the relationship between box volume and cutout size."
+
+#Define volume func for box
+V <- function(x) {
+  return(x*(11-2*x)*(8.5-2*x))
+}
+#Plot
+ggplot(data.frame(x=c(0,4)),aes(x=x)) +
+  stat_function(fun=V) +
+  labs(title = "Box Volume vs Cutout Size", x = "Cutout Size(in)",y="Volume(in^3)")
+```
+#What I've Learned so Far
+```markdown
+In this course I've learned how to use specific funtions in r and new ways to wrangle data to best fit my needs. I've learned how to create different plots, and I can continue to learn and improve my code as I grow.
+```
+
+```markdown
+#Appendix all code
+```
+```{r}
+
+
+library(quarto)
+quarto_render("Activity14.qmd")
+```
+
