@@ -1,0 +1,13 @@
+Plans for this project: 
+The plan of this project is to get famaliar with Github. 
+This will be accomplished by creating branches, creating pull requests, merging changes to main and practicing commits.
+
+Plan for setting up and maintaining repo:
+Main branch will have the final production version
+Development and changes will be done in the dev branch and merged to main once they are working correctly
+Changes will be committed to Github dev branch frequently with clear commit messages
+
+Needs:
+All data files used in the code
+The Qmd file
+Output pdf file
